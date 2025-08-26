@@ -11,7 +11,7 @@ const tempText = document.querySelector(".temp");
 const cloudsStatus = document.querySelector(".clouds-status");
 const humidityText = document.querySelector(".humidity");
 const windSpeedText = document.querySelector(".speed");
-const futureWeather=document.querySelector(".future-weather");
+const futureWeather = document.querySelector(".future-weather");
 function getCurrentDate() {
     let currentDate = new Date();
     return currentDate.toLocaleDateString("en-GB", {
@@ -45,13 +45,16 @@ function getWeatherIcon(id) {
     }
 }
 btn.addEventListener("click", (e) => {
-    updateWeatherInfo(input.value);
-    console.log(input.value);
-    input.value = "";
-    input.blur();
+    if (input.value.trim() != "") {
+        updateWeatherInfo(input.value);
+        console.log(input.value);
+        input.value = "";
+        input.blur();
+    }
+
 })
 input.addEventListener("keydown", (e) => {
-    if (e.key == "Enter") {
+    if (e.key == "Enter" && input.value.trim() != "") {
         updateWeatherInfo(input.value);
         console.log(input.value);
         input.value = "";
@@ -94,32 +97,32 @@ async function updateWeatherInfo(city) {
 async function updateForecastInfo(city) {
     const forecastData = await getFetchData("forecast", city);
     console.log(forecastData);
-    let timeTaken="12:00:00";
-    let todayDate=new Date().toISOString().split("T")[0];
+    let timeTaken = "12:00:00";
+    let todayDate = new Date().toISOString().split("T")[0];
     console.log(todayDate);
-    futureWeather.innerHTML="";
-    forecastData.list.forEach((data) => { 
-        if(data.dt_txt.includes(timeTaken) && !data.dt_txt.includes(todayDate)){
+    futureWeather.innerHTML = "";
+    forecastData.list.forEach((data) => {
+        if (data.dt_txt.includes(timeTaken) && !data.dt_txt.includes(todayDate)) {
             updateForecastItems(data);
             console.log(data);
         }
     })
-    
+
 }
 
-function updateForecastItems(data){
-    const{
-        main:{temp},
-        weather:[{id}],
-        dt_txt:date
-    }=data
-    const dateTaken=new Date(date);
-    const options={
-        day:"2-digit",
-        month:"short"
+function updateForecastItems(data) {
+    const {
+        main: { temp },
+        weather: [{ id }],
+        dt_txt: date
+    } = data
+    const dateTaken = new Date(date);
+    const options = {
+        day: "2-digit",
+        month: "short"
     };
-    const dateResult=dateTaken.toLocaleDateString("en-US",options);
-    const weather=`
+    const dateResult = dateTaken.toLocaleDateString("en-US", options);
+    const weather = `
      <div class="items">
                      <p>${dateResult}</p>
                     <img  height="60" src=${getWeatherIcon(id)} alt="">
@@ -127,7 +130,7 @@ function updateForecastItems(data){
 
                 </div>
     `
-    futureWeather.insertAdjacentHTML("beforeend",weather);
+    futureWeather.insertAdjacentHTML("beforeend", weather);
 }
 
 function showDisplay(section) {
